@@ -21,7 +21,7 @@ class NewsvendorDDPGAgent(object):
     """
 
     def __init__(self, env, replay_memory, action_range, gamma=0.99, experiment_name='default', 
-            buffer_priming_period=1500, tau=0.005, mini_batch_size=128, noise_std=5, eval_t=2000):
+            buffer_priming_period=1500, tau=0.005, mini_batch_size=128, noise_std_ratio=20, eval_t=2000):
 
         # Hyperparameters
         self.env = env
@@ -35,7 +35,7 @@ class NewsvendorDDPGAgent(object):
         self.results = []
         self.averages = [[],[],[],[],[],[],[]]
         self.t = 0
-        self.noise_std = noise_std
+        self.noise_std = (action_range[1] - action_range[0])/noise_std_ratio
         self.state_size = 7
         self.eval_t = eval_t
         self.evaluate = False
@@ -247,6 +247,7 @@ class NewsvendorDDPGAgent(object):
                     break
 
 # Create 7 distributions to use for the environment 
+# EXPERIMENT 2
 lst = [Distribution(d.norm, 50, 5)]
 lst.append(Distribution(d.norm, 50, 10))
 lst.append(Distribution(d.norm, 50, 20))
@@ -258,7 +259,7 @@ lst.append(Distribution(d.uniform, 90, 0))
 env = Environment(lst, 10, 5, 30, 100)
 memory = ReplayMemory(100000)
 agent = NewsvendorDDPGAgent(env, memory, [0, 100], buffer_priming_period=25000, tau=0.001, mini_batch_size=128, 
-eval_t=35000, noise_std=3, experiment_name="Exp0")
+eval_t=35000, noise_std_ratio=20, experiment_name="Exp0")
 
 plt.figure(1)
 # Run the agent for 300 episodes 
